@@ -12,7 +12,8 @@ import com.example.movieapp.R
 import com.example.movieapp.model.Movie
 
 class MoviesAdapter(
-    private var movies: MutableList<Movie>
+    private var movies: MutableList<Movie>,
+    private val onMovieClick: (movie: Movie) -> Unit
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -32,6 +33,8 @@ class MoviesAdapter(
                 .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
                 .transform(CenterCrop())
                 .into(poster)
+
+            itemView.setOnClickListener { onMovieClick.invoke(movie) }
         }
     }
 
@@ -41,12 +44,6 @@ class MoviesAdapter(
         holder.bind(movies[position])
     }
 
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun updateMovies(movies: List<Movie>) {
-//        this.movies = movies.List()
-//        notifyDataSetChanged()
-//    }
-
     fun appendMovies(movies: List<Movie>){
         this.movies.addAll(movies)
         notifyItemRangeInserted(
@@ -54,4 +51,6 @@ class MoviesAdapter(
             movies.size - 1
         )
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.movieapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -50,7 +51,9 @@ class MainActivity : AppCompatActivity() {
             false
         )
         popularMovies.layoutManager = popularMoviesLayoutManager
-        popularMoviesAdapter = MoviesAdapter(mutableListOf())
+        popularMoviesAdapter = MoviesAdapter(mutableListOf()) {
+                movie -> showMovieDetails(movie)
+        }
         popularMovies.adapter = popularMoviesAdapter
 
         getPopularMovies()
@@ -63,7 +66,9 @@ class MainActivity : AppCompatActivity() {
             false
         )
         topRatedMovies.layoutManager = topRatedMoviesLayoutManager
-        topRatedMoviesAdapter = MoviesAdapter(mutableListOf())
+        topRatedMoviesAdapter = MoviesAdapter(mutableListOf()) {
+            movie -> showMovieDetails(movie)
+        }
         topRatedMovies.adapter = topRatedMoviesAdapter
 
         getTopRatedMovies()
@@ -76,7 +81,9 @@ class MainActivity : AppCompatActivity() {
             false
         )
         upcomingMovies.layoutManager = upcomingMoviesLayoutManager
-        upcomingMoviesAdapter = MoviesAdapter(mutableListOf())
+        upcomingMoviesAdapter = MoviesAdapter(mutableListOf()) {
+                movie -> showMovieDetails(movie)
+        }
         upcomingMovies.adapter = upcomingMoviesAdapter
 
         getUpcomingMovies()
@@ -180,5 +187,19 @@ class MainActivity : AppCompatActivity() {
     private fun onUpcomingMoviesFetched(movies: List<Movie>) {
         upcomingMoviesAdapter.appendMovies(movies)
         attachUpcomingMoviesOnScrollListener()
+    }
+
+    /**
+     * Implement Movie Details
+     */
+    private fun showMovieDetails(movie: Movie) {
+        val intent = Intent(this, MovieDetailsActivity::class.java)
+        intent.putExtra(MOVIE_BACKDROP, movie.backdropPath)
+        intent.putExtra(MOVIE_POSTER, movie.posterPath)
+        intent.putExtra(MOVIE_TITLE, movie.title)
+        intent.putExtra(MOVIE_RATING, movie.rating)
+        intent.putExtra(MOVIE_RELEASE_DATE, movie.releaseDate)
+        intent.putExtra(MOVIE_OVERVIEW, movie.overview)
+        startActivity(intent)
     }
 }
