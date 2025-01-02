@@ -1,7 +1,6 @@
 package com.example.movieapp
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,10 +16,15 @@ class MainActivity : AppCompatActivity() {
     //implement RecyclerView
     private lateinit var popularMovies: RecyclerView
     private lateinit var popularMoviesAdapter: MoviesAdapter
-
     private lateinit var popularMoviesLayoutManager: LinearLayoutManager
 
     private var popularMoviesPage = 1
+
+    private lateinit var topRatedMovies: RecyclerView
+    private lateinit var topRatedMoviesAdapter: MoviesAdapter
+    private lateinit var topRatedMoviesLayoutManager: LinearLayoutManager
+
+    private var topRatedMoviesPage = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        //Input data to screen
+        //Input data to screen for Popular Movies
         popularMovies = findViewById(R.id.popular_movies)
         popularMoviesLayoutManager = LinearLayoutManager(
             this,
@@ -44,6 +48,19 @@ class MainActivity : AppCompatActivity() {
         popularMovies.adapter = popularMoviesAdapter
 
         getPopularMovies()
+
+        //Input data to screen for Top Rated Movies
+        topRatedMovies = findViewById(R.id.top_rated_movies)
+        topRatedMoviesLayoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        topRatedMovies.layoutManager = topRatedMoviesLayoutManager
+        topRatedMoviesAdapter = MoviesAdapter(mutableListOf())
+        topRatedMovies.adapter = topRatedMoviesAdapter
+
+        getTopRatedMovies()
 
         MoviesRepository.getPopularMovies(
             popularMoviesPage,
@@ -84,5 +101,34 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun getTopRatedMovies() {
+        MoviesRepository.getTopRatedMovies(
+            topRatedMoviesPage,
+            ::onTopRatedMoviesFetched,
+            ::onError
+        )
+    }
+
+    private fun attachTopRatedMoviesOnScrollListener() {
+        topRatedMovies.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val totalItemCount = topRatedMoviesLayoutManager.itemCount
+                val visibleItemCount = topRatedMoviesLayoutManager.childCount
+                val firstVisibleItem = topRatedMoviesLayoutManager.findFirstVisibleItemPosition()
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    topRatedMovies.removeOnScrollListener(this)
+                    topRatedMoviesPage++
+                    getTopRatedMovies()
+                }
+            }
+        })
+    }
+
+    private fun onTopRatedMoviesFetched(movies: List<Movie>) {
+        topRatedMoviesAdapter.appendMovies(movies)
+        attachTopRatedMoviesOnScrollListener()
     }
 }
