@@ -23,4 +23,10 @@ interface ApiService {
         @Query("api_key") apiKey: String = "61751efb816265243f345d4a734d0190",
         @Query("page") page: Int
     ): Call<GetMoviesResponse>
+
+    @GET("movie/upcoming")
+    fun getUpcomingMovies(
+        @Query("api_key") apiKey: String = "61751efb816265243f345d4a734d0190",
+        @Query("page") page: Int
+    ): Call<GetMoviesResponse>
 }
