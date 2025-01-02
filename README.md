@@ -1,3 +1,6 @@
 # Simple Movie Catalog App
-## List Of Movie - Detail of Movie
-![img.png](image/img.png) ![img.png](image/img2.png)
+## List Of Movie
+<img src="image/img.png" alt="img.png" width="500">
+
+## Details of Movie
+<img src="image/img2.png" alt="img2.png" width="300">
