@@ -7,10 +7,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.movieapp.data.MoviesAdapter
 import com.example.movieapp.model.Movie
 import com.example.movieapp.repository.MoviesRepository
 
 class MainActivity : AppCompatActivity() {
+    //implement RecyclerView
+    private lateinit var popularMovies: RecyclerView
+    private lateinit var popularMoviesAdapter: MoviesAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,6 +28,16 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        //Input data to screen
+        popularMovies = findViewById(R.id.popular_movies)
+        popularMovies.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        popularMoviesAdapter = MoviesAdapter(listOf())
+        popularMovies.adapter = popularMoviesAdapter
+
         MoviesRepository.getPopularMovies(
             onSuccess = ::onPopularMoviesFetched,
             onError = ::onError
@@ -28,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onPopularMoviesFetched(movies: List<Movie>) {
-        Log.d("Main Activity", "Movies: $movies")
+        popularMoviesAdapter.updateMovies(movies)
     }
 
     private fun onError() {
